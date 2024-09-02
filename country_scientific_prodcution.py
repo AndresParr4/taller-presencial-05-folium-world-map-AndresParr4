@@ -1,11 +1,10 @@
 """Taller Presencial Evaluable"""
 
 import pandas as pd
-import folium
+import folium as folium
 
 def load_affiliations():
     """Carga el archivo scopus-papers.csv y retorna un dataframe con la columna 'Affiliations'"""
-
     dataframe = pd.read_csv(
         "https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/scopus-papers.csv",
         sep=",",
@@ -20,8 +19,6 @@ def remove_na_rows(affiliations):
     affiliations = affiliations.dropna(subset=["Affiliations"])
 
     return affiliations
-  
-
 
 def add_countries_column(affiliations):
     """Transforma la columna 'Affiliations' a una lista de paises."""
@@ -41,21 +38,22 @@ def add_countries_column(affiliations):
     return affiliations
 
 def clean_countries(affiliations):
+
     affiliations = affiliations.copy()
-    affiliations["country"] = affiliations["countries"].str.replace(
+    affiliations["countries"] = affiliations["countries"].str.replace(
         "United States", "United States of America"
     )
     return affiliations
 
 def count_country_frequency(affiliations):
-    """Cuenta la frecuencia de los paises en la columna 'countries'"""
+    """Cuenta la frecuencia de cada país en la columna 'countries'"""
 
-    affiliations = affiliations["country"].copy()
-    countries = affiliations.str.split(", ")
+    countries = affiliations["countries"].copy()
+    countries = countries.str.split(", ")
     countries = countries.explode()
     countries = countries.value_counts()
-
     return countries
+
 
 def plot_world_map(countries):
     """Grafica un mapa mundial con la frecuencia de cada país."""
@@ -69,7 +67,7 @@ def plot_world_map(countries):
     folium.Choropleth(
         geo_data="https://raw.githubusercontent.com/python-visualization/folium/master/examples/data/world-countries.json",
         data=countries,
-        columns=["country", "count"],
+        columns=["countries", "count"],
         key_on="feature.properties.name",
         fill_color="Greens",
     ).add_to(m)
@@ -79,7 +77,6 @@ def plot_world_map(countries):
 
 def main():
     """Función principal"""
-
     affiliations = load_affiliations()
     affiliations = remove_na_rows(affiliations)
     affiliations = add_countries_column(affiliations)
@@ -91,3 +88,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    
